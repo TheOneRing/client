@@ -105,6 +105,7 @@ private:
 public:
 };
 
+#if 0
 
 /**
  * @brief Run a PROPFIND on a directory and process the results for Discovery
@@ -151,7 +152,51 @@ private:
 public:
     QByteArray _dataFingerprint;
 };
+#else
 
+class DiscoverySingleDirectoryJobCs3 : public QObject
+{
+    Q_OBJECT
+public:
+    explicit DiscoverySingleDirectoryJobCs3(const AccountPtr &account, const QString &path, QObject *parent = nullptr);
+    // Specify that this is the root and we need to check the data-fingerprint
+    void setIsRootPath() { _isRootPath = true; }
+    void start();
+    void abort();
+
+    // This is not actually a network job, it is just a job
+signals:
+    void firstDirectoryPermissions(RemotePermissions);
+    void etag(const QString &);
+    void finished(const HttpResult<QVector<RemoteInfo>> &result);
+
+private slots:
+    void directoryListingIteratedSlot(QString, const QMap<QString, QString> &);
+    void lsJobFinishedWithoutErrorSlot();
+    void lsJobFinishedWithErrorSlot(QNetworkReply *);
+
+private:
+    QVector<RemoteInfo> _results;
+    QString _subPath;
+    QString _firstEtag;
+    AccountPtr _account;
+    // The first result is for the directory itself and need to be ignored.
+    // This flag is true if it was already ignored.
+    bool _ignoredFirst;
+    // Set to true if this is the root path and we need to check the data-fingerprint
+    bool _isRootPath;
+    // If this directory is an external storage (The first item has 'M' in its permission)
+    bool _isExternalStorage;
+    // If set, the discovery will finish with an error
+    QString _error;
+    QPointer<LsColJob> _lsColJob;
+
+public:
+    QByteArray _dataFingerprint;
+};
+using DiscoverySingleDirectoryJob = DiscoverySingleDirectoryJobCs3;
+
+#endif
 class DiscoveryPhase : public QObject
 {
     Q_OBJECT

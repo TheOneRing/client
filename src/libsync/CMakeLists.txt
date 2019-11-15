@@ -112,6 +112,7 @@ target_link_libraries(${synclib_NAME} PUBLIC
     ${OS_SPECIFIC_LINK_LIBRARIES}
     Qt5::Core Qt5::Network
     zsync
+    cs3apis
 )
 
 if (NOT TOKEN_AUTH_ONLY)

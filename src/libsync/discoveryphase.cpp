@@ -28,7 +28,12 @@
 #include <QFileInfo>
 #include <QTextCodec>
 #include <cstring>
+#include <QEventLoop>
 
+
+#include <grpcpp/grpcpp.h>
+#include "cs3/gateway/v1beta1/gateway_api.grpc.pb.h"
+#include "cs3/storage/provider/v1beta1/provider_api.grpc.pb.h"
 
 namespace OCC {
 
@@ -303,6 +308,7 @@ void DiscoverySingleLocalDirectoryJob::run() {
     emit finished(results);
 }
 
+#if 0
 DiscoverySingleDirectoryJob::DiscoverySingleDirectoryJob(const AccountPtr &account, const QString &path, QObject *parent)
     : QObject(parent)
     , _subPath(path)
@@ -492,4 +498,77 @@ void DiscoverySingleDirectoryJob::lsJobFinishedWithErrorSlot(QNetworkReply *r)
     emit finished(HttpError{ httpCode, msg });
     deleteLater();
 }
+#else
+
+// TODO: do it properly
+
+namespace Cs3GareWay = cs3::gateway::v1beta1;
+namespace Cs3Storrage = cs3::storage::provider::v1beta1;
+Cs3GareWay::GatewayAPI::Stub* getClient(const QUrl &remote)
+{
+    qDebug() << remote;
+    static QMap<QString, Cs3GareWay::GatewayAPI::Stub*> gateways;
+    auto stub = gateways.constFind(remote.host());
+    if (stub == gateways.cend())
+    {
+        return *gateways.insert(remote.host(), new Cs3GareWay::GatewayAPI::Stub(grpc::CreateChannel(QStringLiteral("%1:9142").arg(remote.host()).toUtf8().constData(), grpc::InsecureChannelCredentials())));
+    }
+    return *stub;
+
 }
+
+DiscoverySingleDirectoryJobCs3::DiscoverySingleDirectoryJobCs3(const AccountPtr &account, const QString &path, QObject *parent)
+    : QObject(parent)
+    , _subPath(path)
+    , _account(account)
+    , _ignoredFirst(false)
+    , _isRootPath(false)
+    , _isExternalStorage(false)
+{
+}
+
+void DiscoverySingleDirectoryJobCs3::start()
+{
+    auto ref = Cs3Storrage::Reference();
+    ref.set_path(_subPath.toUtf8().constData());
+
+    auto req = Cs3Storrage::StatRequest();
+    req.set_allocated_ref(&ref);
+
+
+    auto resp = Cs3Storrage::StatResponse();
+    // what is the client and how to get it
+    grpc::ClientContext context;
+//    context.set_
+    auto cred_req = _account->sendRequest(QByteArrayLiteral("GET"), QStringLiteral("%1/ocs/v1.php/cloud/capabilities").arg(_account->url().toString()));
+    QEventLoop loop;
+    connect(cred_req, &SimpleNetworkJob::finishedSignal, this, [&context, &loop](QNetworkReply *repl){
+        context.AddMetadata("x-access-token", repl->rawHeader("x-access-token").constData());
+        loop.quit();
+    });
+    loop.exec();
+    getClient(_account->url())->Stat(&context, req, &resp);
+}
+
+void DiscoverySingleDirectoryJobCs3::abort()
+{
+
+}
+
+void DiscoverySingleDirectoryJobCs3::directoryListingIteratedSlot(QString, const QMap<QString, QString> &)
+{
+
+}
+
+void DiscoverySingleDirectoryJobCs3::lsJobFinishedWithoutErrorSlot()
+{
+
+}
+
+void DiscoverySingleDirectoryJobCs3::lsJobFinishedWithErrorSlot(QNetworkReply *)
+{
+
+}
+
+}
+#endif

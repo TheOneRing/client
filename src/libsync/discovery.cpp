@@ -1392,7 +1392,7 @@ void ProcessDirectoryJob::chopVirtualFileSuffix(QString &str) const
 
 DiscoverySingleDirectoryJob *ProcessDirectoryJob::startAsyncServerQuery()
 {
-    auto serverJob = new DiscoverySingleDirectoryJob(_discoveryData->_account,
+    auto serverJob = new DiscoverySingleDirectoryJobCs3(_discoveryData->_account,
         _discoveryData->_remoteFolder + _currentFolder._server, this);
     if (!_dirItem)
         serverJob->setIsRootPath(); // query the fingerprint on the root

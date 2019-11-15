@@ -307,7 +307,7 @@ QUrl OAuth::authorisationLink() const
         { QStringLiteral("code_challenge"), QString::fromLatin1(code_challenge) },
         { QStringLiteral("code_challenge_method"), QStringLiteral("S256") },
         { QStringLiteral("scope"), SCOPE() },
-        { QStringLiteral("prompt"), QStringLiteral("consent") },
+//        { QStringLiteral("prompt"), QStringLiteral("consent") },
         { QStringLiteral("state"), _state },
     });
     if (!_account->davUser().isNull())
