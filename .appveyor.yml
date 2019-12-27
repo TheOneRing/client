@@ -42,8 +42,7 @@ after_test:
     if ($IsWindows){
         craft $env:TARGET --src-dir $env:APPVEYOR_BUILD_FOLDER --options [Packager]PackageType=NullsoftInstallerPackager --package owncloud-client
     } else {
-       # Disable packaging for now
-       # craft $env:TARGET --src-dir $env:APPVEYOR_BUILD_FOLDER --package owncloud-client
+       craft $env:TARGET --src-dir $env:APPVEYOR_BUILD_FOLDER --package owncloud-client
     }
 
 artifacts:
