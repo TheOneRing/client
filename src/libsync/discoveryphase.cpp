@@ -507,13 +507,20 @@ namespace Cs3Storrage = cs3::storage::provider::v1beta1;
 Cs3GareWay::GatewayAPI::Stub* getClient(const QUrl &remote)
 {
     qDebug() << remote;
-    static QMap<QString, Cs3GareWay::GatewayAPI::Stub*> gateways;
-    auto stub = gateways.constFind(remote.host());
+    static std::map<QString, std::unique_ptr<Cs3GareWay::GatewayAPI::Stub>> gateways;
+    auto stub = gateways.find(remote.host());
     if (stub == gateways.cend())
     {
-        return *gateways.insert(remote.host(), new Cs3GareWay::GatewayAPI::Stub(grpc::CreateChannel(QStringLiteral("%1:9142").arg(remote.host()).toUtf8().constData(), grpc::InsecureChannelCredentials())));
+        grpc::string host = "localhost:9142"; // QStringLiteral("%1:9142").arg(remote.host());
+        auto channel = grpc::CreateChannel("localhost:9142", grpc::InsecureChannelCredentials());
+        std::cout << "----------------------------" << std::endl;
+        //std::cout << channel->GetState(true) << std::endl;
+        std::cout << channel->GetServiceConfigJSON() << std::endl;
+        std::cout << "----------------------------" << std::endl;
+        auto gateway = Cs3GareWay::GatewayAPI::NewStub(channel, {});
+        return gateways.emplace(remote.host(), gateway.release()).first->second.get();
     }
-    return *stub;
+    return stub->second.get();
 
 }
 
@@ -529,6 +536,7 @@ DiscoverySingleDirectoryJobCs3::DiscoverySingleDirectoryJobCs3(const AccountPtr 
 
 void DiscoverySingleDirectoryJobCs3::start()
 {
+    grpc_init();
     auto ref = Cs3Storrage::Reference();
     ref.set_path(_subPath.toUtf8().constData());
 
@@ -543,6 +551,7 @@ void DiscoverySingleDirectoryJobCs3::start()
     auto cred_req = _account->sendRequest(QByteArrayLiteral("GET"), QStringLiteral("%1/ocs/v1.php/cloud/capabilities").arg(_account->url().toString()));
     QEventLoop loop;
     connect(cred_req, &SimpleNetworkJob::finishedSignal, this, [&context, &loop](QNetworkReply *repl){
+        // TODO: https://github.com/etcd-io/etcd/issues/7705#issuecomment-293263375
         context.AddMetadata("x-access-token", repl->rawHeader("x-access-token").constData());
         loop.quit();
     });
