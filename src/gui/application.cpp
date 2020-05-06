@@ -790,12 +790,31 @@ void Application::tryTrayAgain()
 bool Application::event(QEvent *event)
 {
 #ifdef Q_OS_MAC
-    if (event->type() == QEvent::FileOpen) {
+    qWarning(lcApplication) << "event:" << event->type();
+    switch (event->type()) {
+    case QEvent::FileOpen:
+    {
         QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
         qCDebug(lcApplication) << "QFileOpenEvent" << openEvent->file();
         // virtual file, open it after the Folder were created (if the app is not terminated)
         QString fn = openEvent->file();
         QTimer::singleShot(0, this, [this, fn] { openVirtualFile(fn); });
+    }
+    break;
+    case QEvent::ApplicationStateChange:
+    {
+        QApplicationStateChangeEvent *state = static_cast<QApplicationStateChangeEvent*>(event);
+        static auto oldState = Qt::ApplicationHidden;
+        qWarning(lcApplication) << "wtf shine and rise" << oldState << state->applicationState();
+        if (state->applicationState() == Qt::ApplicationActive)
+        {
+            _gui->slotShowSettings();
+        }
+        oldState = state->applicationState();
+    }
+        break;
+    default:
+        break;
     }
 #endif
     return SharedTools::QtSingleApplication::event(event);
