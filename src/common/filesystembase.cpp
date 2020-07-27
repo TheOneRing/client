@@ -261,7 +261,7 @@ bool FileSystem::openAndSeekFileSharedRead(QFile *file, QString *errorOrNull, qi
     // the fd the handle will be closed too.
     int fd = _open_osfhandle((intptr_t)fileHandle, _O_RDONLY);
     if (fd == -1) {
-        error = "could not make fd from handle";
+        error = QStringLiteral("could not make fd from handle");
         CloseHandle(fileHandle);
         return false;
     }
@@ -333,9 +333,9 @@ QString FileSystem::fileSystemForPath(const QString &path)
 {
     // See also QStorageInfo (Qt >=5.4) and GetVolumeInformationByHandleW (>= Vista)
     QString drive = path.left(2);
-    if (!drive.endsWith(":"))
+    if (!drive.endsWith(QLatin1Char(':')))
         return QString();
-    drive.append('\\');
+    drive.append(QLatin1Char('\\'));
 
     const size_t fileSystemBufferSize = 4096;
     TCHAR fileSystemBuffer[fileSystemBufferSize];
@@ -479,7 +479,7 @@ bool FileSystem::isFileLocked(const QString &fileName)
 
 bool FileSystem::isLnkFile(const QString &filename)
 {
-    return filename.endsWith(".lnk");
+    return filename.endsWith(QLatin1String(".lnk"));
 }
 
 bool FileSystem::isJunction(const QString &filename)
@@ -498,6 +498,35 @@ bool FileSystem::isJunction(const QString &filename)
     Q_UNUSED(filename);
     return false;
 #endif
+}
+
+QString FileSystem::pathtoUNC(const QString &str)
+{
+    int len = 0;
+    QString longStr;
+
+    len = str.length();
+    longStr.reserve(len+4);
+
+    // prepend \\?\ and convert '/' => '\' to support long names
+    if( str[0] == QLatin1Char('/') || str[0] == QLatin1Char('\\') ) {
+        // Don't prepend if already UNC
+        if( !(len > 1 && (str[1] == QLatin1Char('/') || str[1] == QLatin1Char('\\'))) ) {
+            longStr.append(QStringLiteral("\\\\?"));
+        }
+    } else {
+        longStr.append(QStringLiteral("\\\\?\\")); // prepend string by this four magic chars.
+    }
+    longStr += str;
+
+    /* replace all occurences of / with the windows native \ */
+
+    for (auto it = longStr.begin(); it != longStr.end(); ++it) {
+        if(*it == QLatin1Char('/')) {
+            *it = QLatin1Char('\\');
+        }
+    }
+    return longStr;
 }
 
 } // namespace OCC

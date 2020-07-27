@@ -107,8 +107,8 @@ private slots:
         SqlQuery q(_db);
         q.prepare(sql);
         q.bindValue(1, 3);
-        q.bindValue(2, QString::fromUtf8("пятницы"));
-        q.bindValue(3, QString::fromUtf8("проспект"));
+        q.bindValue(2, QStringLiteral("пятницы"));
+        q.bindValue(3, QStringLiteral("проспект"));
         q.bindValue(4, 1403002224);
         QVERIFY(q.exec());
     }
@@ -121,8 +121,8 @@ private slots:
         if(q.next().hasData) {
             QString name = q.stringValue(1);
             QString address = q.stringValue(2);
-            QVERIFY( name == QString::fromUtf8("пятницы") );
-            QVERIFY( address == QString::fromUtf8("проспект"));
+            QVERIFY( name == QStringLiteral("пятницы") );
+            QVERIFY( address == QStringLiteral("проспект"));
         }
     }
 

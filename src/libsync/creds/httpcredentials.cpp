@@ -41,12 +41,12 @@ namespace OCC {
 Q_LOGGING_CATEGORY(lcHttpCredentials, "sync.credentials.http", QtInfoMsg)
 
 namespace {
-    const char userC[] = "user";
-    const char isOAuthC[] = "oauth";
-    const char clientCertBundleC[] = "clientCertPkcs12";
-    const char clientCertPasswordC[] = "_clientCertPassword";
-    const char clientCertificatePEMC[] = "_clientCertificatePEM";
-    const char clientKeyPEMC[] = "_clientKeyPEM";
+    const auto userC = QStringLiteral("user");
+    const auto isOAuthC = QStringLiteral("oauth");
+    const auto clientCertBundleC = QStringLiteral("clientCertPkcs12");
+    const auto clientCertPasswordC = QStringLiteral("_clientCertPassword");
+    const auto clientCertificatePEMC = QStringLiteral("_clientCertificatePEM");
+    const auto clientKeyPEMC = QStringLiteral("_clientKeyPEM");
     const char authenticationFailedC[] = "owncloud-authentication-failed";
     const char needRetryC[] = "owncloud-need-retry";
 } // ns
@@ -132,7 +132,7 @@ HttpCredentials::HttpCredentials(DetermineAuthTypeJob::AuthType authType, const 
 
 QString HttpCredentials::authType() const
 {
-    return QString::fromLatin1("http");
+    return QStringLiteral("http");
 }
 
 QString HttpCredentials::user() const
@@ -170,7 +170,7 @@ bool HttpCredentials::ready() const
 
 QString HttpCredentials::fetchUser()
 {
-    _user = _account->credentialSetting(QLatin1String(userC)).toString();
+    _user = _account->credentialSetting(userC).toString();
     return _user;
 }
 
@@ -198,7 +198,7 @@ void HttpCredentials::fetchFromKeychain()
 
 void HttpCredentials::fetchFromKeychainHelper()
 {
-    _clientCertBundle = _account->credentialSetting(QLatin1String(clientCertBundleC)).toByteArray();
+    _clientCertBundle = _account->credentialSetting(clientCertBundleC).toByteArray();
     if (!_clientCertBundle.isEmpty()) {
         // New case (>=2.6): We have a bundle in the settings and read the password from
         // the keychain
@@ -371,7 +371,7 @@ void HttpCredentials::slotReadJobDone(QKeychain::Job *incomingJob)
         return;
     }
 
-    bool isOauth = _account->credentialSetting(QLatin1String(isOAuthC)).toBool();
+    bool isOauth = _account->credentialSetting(isOAuthC).toBool();
     if (isOauth) {
         _refreshToken = job->textData();
     } else {
@@ -493,12 +493,12 @@ void HttpCredentials::persist()
         return;
     }
 
-    _account->setCredentialSetting(QLatin1String(userC), _user);
-    _account->setCredentialSetting(QLatin1String(isOAuthC), isUsingOAuth());
+    _account->setCredentialSetting(userC, _user);
+    _account->setCredentialSetting(isOAuthC, isUsingOAuth());
     if (!_clientCertBundle.isEmpty()) {
         // Note that the _clientCertBundle will often be cleared after usage,
         // it's just written if it gets passed into the constructor.
-        _account->setCredentialSetting(QLatin1String(clientCertBundleC), _clientCertBundle);
+        _account->setCredentialSetting(clientCertBundleC, _clientCertBundle);
     }
     _account->wantsAccountSaved(_account);
 
@@ -517,7 +517,7 @@ void HttpCredentials::persist()
         job->start();
         _clientCertBundle.clear();
         _clientCertPassword.clear();
-    } else if (_account->credentialSetting(QLatin1String(clientCertBundleC)).isNull() && !_clientSslCertificate.isNull()) {
+    } else if (_account->credentialSetting(clientCertBundleC).isNull() && !_clientSslCertificate.isNull()) {
         // Option 2, pre 2.6 configs: We used to store the raw cert/key in the keychain and
         // still do so if no bundle is available. We can't currently migrate to Option 1
         // because we have no functions for creating an encrypted pkcs12 bundle.

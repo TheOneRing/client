@@ -37,8 +37,8 @@ OwncloudHttpCredsPage::OwncloudHttpCredsPage(QWidget *parent)
         _ocWizard = qobject_cast<OwncloudWizard *>(parent);
     }
 
-    registerField(QLatin1String("OCUser*"), _ui.leUsername);
-    registerField(QLatin1String("OCPasswd*"), _ui.lePassword);
+    registerField(QStringLiteral("OCUser*"), _ui.leUsername);
+    registerField(QStringLiteral("OCPasswd*"), _ui.lePassword);
 
     Theme *theme = Theme::instance();
     switch (theme->userIDType()) {
@@ -99,7 +99,7 @@ void OwncloudHttpCredsPage::initializePage()
         // user specified url too. Sometimes redirects can lose
         // the user:pw information.
         if (url.userName().isEmpty()) {
-            url = ocWizard->ocUrl();
+            url = QUrl::fromUserInput(ocWizard->ocUrl());
         }
 
         const QString user = url.userName();
@@ -138,7 +138,7 @@ bool OwncloudHttpCredsPage::validatePage()
         ocWizard->account()->clearCookieJar();
 
         emit completeChanged();
-        emit connectToOCUrl(field("OCUrl").toString().simplified());
+        emit connectToOCUrl(field(QStringLiteral("OCUrl")).toString().simplified());
 
         return false;
     } else {

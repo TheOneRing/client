@@ -50,7 +50,7 @@ OwncloudAdvancedSetupPage::OwncloudAdvancedSetupPage()
     setTitle(WizardCommon::titleTemplate().arg(tr("Connect to %1").arg(theme->appNameGUI())));
     setSubTitle(WizardCommon::subTitleTemplate().arg(tr("Setup local folder options")));
 
-    registerField(QLatin1String("OCSyncFromScratch"), _ui.cbSyncFromScratch);
+    registerField(QStringLiteral("OCSyncFromScratch"), _ui.cbSyncFromScratch);
 
     _ui.errorScrollContents->layout()->addWidget(_progressIndi);
     stopSpinner();
@@ -69,7 +69,7 @@ OwncloudAdvancedSetupPage::OwncloudAdvancedSetupPage()
     _ui.lServerIcon->setText(QString());
     _ui.lServerIcon->setPixmap(appIcon.pixmap(48));
     _ui.lLocalIcon->setText(QString());
-    _ui.lLocalIcon->setPixmap(Utility::createColorAwareIcon(":/client/resources/folder-sync.png"));
+    _ui.lLocalIcon->setPixmap(Utility::createColorAwareIcon(QStringLiteral(":/client/resources/folder-sync.png")));
 
     if (theme->wizardHideExternalStorageConfirmationCheckbox()) {
         _ui.confCheckBoxExternal->hide();
@@ -145,7 +145,7 @@ void OwncloudAdvancedSetupPage::initializePage()
 
 
     if (Theme::instance()->wizardSelectiveSyncDefaultNothing()) {
-        _selectiveSyncBlacklist = QStringList("/");
+        _selectiveSyncBlacklist = QStringList(QStringLiteral("/"));
         setRadioChecked(_ui.rSelectiveSync);
         QTimer::singleShot(0, this, &OwncloudAdvancedSetupPage::slotSelectiveSyncClicked);
     }
@@ -172,7 +172,7 @@ void OwncloudAdvancedSetupPage::updateStatus()
     _ui.pbSelectLocalFolder->setText(QDir::toNativeSeparators(locFolder));
     if (dataChanged()) {
         if (_remoteFolder.isEmpty() || _remoteFolder == QLatin1String("/")) {
-            t = "";
+            t = QLatin1String("");
         } else {
             t = Utility::escape(tr("%1 folder '%2' is synced to local folder '%3'")
                                     .arg(Theme::instance()->appName(), _remoteFolder,
@@ -337,7 +337,7 @@ void OwncloudAdvancedSetupPage::slotSelectiveSyncClicked()
     if (result == QDialog::Accepted) {
         _selectiveSyncBlacklist = dlg->createBlackList();
         updateBlacklist = true;
-    } else if (result == QDialog::Rejected && _selectiveSyncBlacklist == QStringList("/")) {
+    } else if (result == QDialog::Rejected && _selectiveSyncBlacklist == QStringList(QStringLiteral("/"))) {
         _selectiveSyncBlacklist = dlg->oldBlackList();
         updateBlacklist = true;
     }
@@ -384,7 +384,7 @@ void OwncloudAdvancedSetupPage::slotSyncEverythingClicked()
 
 void OwncloudAdvancedSetupPage::slotQuotaRetrieved(const QVariantMap &result)
 {
-    _ui.lSyncEverythingSizeLabel->setText(tr("(%1)").arg(Utility::octetsToString(result["size"].toDouble())));
+    _ui.lSyncEverythingSizeLabel->setText(tr("(%1)").arg(Utility::octetsToString(result[QStringLiteral("size")].toDouble())));
 }
 
 void OwncloudAdvancedSetupPage::setRadioChecked(QRadioButton *radio)

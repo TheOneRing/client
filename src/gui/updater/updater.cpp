@@ -45,9 +45,9 @@ QUrl Updater::updateUrl()
 {
     QUrl updateBaseUrl(QString::fromLocal8Bit(qgetenv("OCC_UPDATE_URL")));
     if (updateBaseUrl.isEmpty()) {
-        updateBaseUrl = QUrl(QLatin1String(APPLICATION_UPDATE_URL));
+        updateBaseUrl = QUrl(QStringLiteral(APPLICATION_UPDATE_URL));
     }
-    if (!updateBaseUrl.isValid() || updateBaseUrl.host() == ".") {
+    if (!updateBaseUrl.isValid() || updateBaseUrl.host() == QLatin1String(".")) {
         return QUrl();
     }
 
@@ -58,7 +58,7 @@ QUrl Updater::updateUrl()
 #endif
 
 #if defined(Q_OS_WIN)
-    urlQuery.addQueryItem(QLatin1String("msi"), QLatin1String("true"));
+    urlQuery.addQueryItem(QStringLiteral("msi"), QStringLiteral("true"));
 #endif
 
     updateBaseUrl.setQuery(urlQuery);
@@ -70,31 +70,31 @@ QUrlQuery Updater::getQueryParams()
 {
     QUrlQuery query;
     Theme *theme = Theme::instance();
-    QString platform = QLatin1String("stranger");
+    QString platform = QStringLiteral("stranger");
     if (Utility::isLinux()) {
-        platform = QLatin1String("linux");
+        platform = QStringLiteral("linux");
     } else if (Utility::isBSD()) {
-        platform = QLatin1String("bsd");
+        platform = QStringLiteral("bsd");
     } else if (Utility::isWindows()) {
-        platform = QLatin1String("win32");
+        platform = QStringLiteral("win32");
     } else if (Utility::isMac()) {
-        platform = QLatin1String("macos");
+        platform = QStringLiteral("macos");
     }
 
     QString sysInfo = getSystemInfo();
     if (!sysInfo.isEmpty()) {
-        query.addQueryItem(QLatin1String("client"), sysInfo);
+        query.addQueryItem(QStringLiteral("client"), sysInfo);
     }
-    query.addQueryItem(QLatin1String("version"), clientVersion());
-    query.addQueryItem(QLatin1String("platform"), platform);
-    query.addQueryItem(QLatin1String("oem"), theme->appName());
+    query.addQueryItem(QStringLiteral("version"), clientVersion());
+    query.addQueryItem(QStringLiteral("platform"), platform);
+    query.addQueryItem(QStringLiteral("oem"), theme->appName());
 
     QString suffix = QString::fromLatin1(MIRALL_STRINGIFY(MIRALL_VERSION_SUFFIX));
-    query.addQueryItem(QLatin1String("versionsuffix"), suffix);
+    query.addQueryItem(QStringLiteral("versionsuffix"), suffix);
 
     auto channel = ConfigFile().updateChannel();
-    if (channel != "stable") {
-        query.addQueryItem(QLatin1String("channel"), channel);
+    if (channel != QLatin1String("stable")) {
+        query.addQueryItem(QStringLiteral("channel"), channel);
     }
 
     return query;
@@ -157,7 +157,7 @@ qint64 Updater::Helper::stringVersionToInt(const QString &version)
         return 0;
     QByteArray baVersion = version.toLatin1();
     int major = 0, minor = 0, patch = 0, build = 0;
-    sscanf(baVersion, "%d.%d.%d.%d", &major, &minor, &patch, &build);
+    sscanf(baVersion.data(), "%d.%d.%d.%d", &major, &minor, &patch, &build);
     return versionToInt(major, minor, patch, build);
 }
 

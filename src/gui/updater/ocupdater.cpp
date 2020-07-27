@@ -27,14 +27,15 @@
 
 #include <stdio.h>
 
+namespace {
+const auto updateAvailableC = QStringLiteral("Updater/updateAvailable");
+const auto updateTargetVersionC = QStringLiteral("Updater/updateTargetVersion");
+const auto updateTargetVersionStringC = QStringLiteral("Updater/updateTargetVersionString");
+const auto seenVersionC = QStringLiteral("Updater/seenVersion");
+const auto autoUpdateAttemptedC = QStringLiteral("Updater/autoUpdateAttempted");
+
+}
 namespace OCC {
-
-static const char updateAvailableC[] = "Updater/updateAvailable";
-static const char updateTargetVersionC[] = "Updater/updateTargetVersion";
-static const char updateTargetVersionStringC[] = "Updater/updateTargetVersionString";
-static const char seenVersionC[] = "Updater/seenVersion";
-static const char autoUpdateAttemptedC[] = "Updater/autoUpdateAttempted";
-
 
 UpdaterScheduler::UpdaterScheduler(QObject *parent)
     : QObject(parent)
@@ -193,28 +194,28 @@ void OCUpdater::slotStartInstaller()
     settings.sync();
     qCInfo(lcUpdater) << "Running updater" << updateFile;
 
-    if(updateFile.endsWith(".exe")) {
-        QProcess::startDetached(updateFile, QStringList() << "/S"
-                                                          << "/launch");
-    } else if(updateFile.endsWith(".msi")) {
+    if(updateFile.endsWith(QLatin1String(".exe"))) {
+        QProcess::startDetached(updateFile, QStringList() << QStringLiteral("/S")
+                                                          << QStringLiteral("/launch"));
+    } else if(updateFile.endsWith(QLatin1String(".msi"))) {
         // When MSIs are installed without gui they cannot launch applications
         // as they lack the user context. That is why we need to run the client
         // manually here. We wrap the msiexec and client invocation in a powershell
         // script because owncloud.exe will be shut down for installation.
         // | Out-Null forces powershell to wait for msiexec to finish.
         auto preparePathForPowershell = [](QString path) {
-            path.replace("'", "''");
+            path.replace(QLatin1String("'"), QLatin1String("''"));
 
             return QDir::toNativeSeparators(path);
         };
 
-        QString msiLogFile = cfg.configPath() + "msi.log";
-        QString command = QString("&{msiexec /norestart /passive /i '%1' /L*V '%2'| Out-Null ; &'%3'}")
+        QString msiLogFile = cfg.configPath() + QStringLiteral("msi.log");
+        QString command = QStringLiteral("&{msiexec /norestart /passive /i '%1' /L*V '%2'| Out-Null ; &'%3'}")
              .arg(preparePathForPowershell(updateFile))
              .arg(preparePathForPowershell(msiLogFile))
              .arg(preparePathForPowershell(QCoreApplication::applicationFilePath()));
 
-        QProcess::startDetached("powershell.exe", QStringList{"-Command", command});
+        QProcess::startDetached(QStringLiteral("powershell.exe"), QStringList{QStringLiteral("-Command"), command});
     }
 }
 
@@ -230,7 +231,7 @@ void OCUpdater::checkForUpdate()
 
 void OCUpdater::slotOpenUpdateUrl()
 {
-    QDesktopServices::openUrl(_updateInfo.web());
+    QDesktopServices::openUrl(QUrl::fromUserInput(_updateInfo.web()));
 }
 
 bool OCUpdater::updateSucceeded() const
@@ -356,7 +357,7 @@ void NSISUpdater::versionInfoArrived(const UpdateInfo &info)
         if (url.isEmpty()) {
             showNoUrlDialog(info);
         } else {
-            _targetFile = cfg.configPath() + url.mid(url.lastIndexOf('/')+1);
+            _targetFile = cfg.configPath() + url.mid(url.lastIndexOf(QLatin1Char('/'))+1);
             if (QFile(_targetFile).exists()) {
                 setDownloadState(DownloadComplete);
             } else {

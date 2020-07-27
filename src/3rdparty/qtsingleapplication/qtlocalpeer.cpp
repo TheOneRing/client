@@ -59,7 +59,7 @@ QString QtLocalPeer::appSessionId(const QString &appId)
                  + QString::number(idNum, 16);
 #if defined(Q_OS_WIN)
     if (!pProcessIdToSessionId) {
-        QLibrary lib(QLatin1String("kernel32"));
+        QLibrary lib(QStringLiteral("kernel32"));
         pProcessIdToSessionId = (PProcessIdToSessionId)lib.resolve("ProcessIdToSessionId");
     }
     if (pProcessIdToSessionId) {

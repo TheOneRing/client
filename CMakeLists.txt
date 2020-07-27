@@ -18,6 +18,13 @@ include(KDECMakeSettings)
 include(ECMMarkNonGuiExecutable)
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
+add_definitions(-DQT_NO_CAST_TO_ASCII
+                -DQT_NO_CAST_FROM_ASCII
+                -DQT_NO_URL_CAST_FROM_STRING
+                -DQT_NO_CAST_FROM_BYTEARRAY
+                -DQT_USE_QSTRINGBUILDER
+                -DQT_MESSAGELOGCONTEXT #enable function name and line number in debug output
+                -DQT_DEPRECATED_WARNINGS)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -60,11 +67,6 @@ include(GetGitRevisionDescription)
 
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 
-add_definitions(
-    -DQT_USE_QSTRINGBUILDER
-    -DQT_MESSAGELOGCONTEXT #enable function name and line number in debug output
-    -DQT_DEPRECATED_WARNINGS
-)
 
 # if we cannot get it from git, directly try .tag (packages)
 # this will work if the tar balls have been properly created

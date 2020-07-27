@@ -70,7 +70,7 @@ bool QtLockedFile::lock(LockMode mode, bool block)
 
     if (m_semaphore_hnd == 0) {
         QFileInfo fi(*this);
-        QString sem_name = QString::fromLatin1(SEMAPHORE_PREFIX)
+        QString sem_name = QLatin1String(SEMAPHORE_PREFIX)
                            + fi.absoluteFilePath().toLower();
 
         m_semaphore_hnd = CreateSemaphoreW(0, SEMAPHORE_MAX, SEMAPHORE_MAX,
@@ -91,7 +91,7 @@ bool QtLockedFile::lock(LockMode mode, bool block)
         decrement = SEMAPHORE_MAX;
         if (m_mutex_hnd == 0) {
             QFileInfo fi(*this);
-            QString mut_name = QString::fromLatin1(MUTEX_PREFIX)
+            QString mut_name = QLatin1String(MUTEX_PREFIX)
                                + fi.absoluteFilePath().toLower();
 
             m_mutex_hnd = CreateMutexW(NULL, FALSE, (TCHAR*)mut_name.utf16());

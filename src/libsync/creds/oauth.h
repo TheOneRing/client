@@ -102,8 +102,8 @@ private:
     bool _wellKnownFinished = false;
     QUrl _authEndpoint;
     QUrl _tokenEndpoint;
-    QByteArray _pkceCodeVerifier;
-    QByteArray _state;
+    QString _pkceCodeVerifier;
+    QString _state;
 };
 
 

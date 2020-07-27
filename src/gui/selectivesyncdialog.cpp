@@ -147,7 +147,7 @@ void SelectiveSyncWidget::recursiveInsert(QTreeWidgetItem *parent, QStringList p
     QFileIconProvider prov;
     QIcon folderIcon = prov.icon(QFileIconProvider::Folder);
     if (pathTrail.size() == 0) {
-        if (path.endsWith('/')) {
+        if (path.endsWith(QLatin1Char('/'))) {
             path.chop(1);
         }
         parent->setToolTip(0, path);
@@ -195,12 +195,12 @@ void SelectiveSyncWidget::slotUpdateDirectories(QStringList list)
 
     QUrl url = _account->davUrl();
     QString pathToRemove = url.path();
-    if (!pathToRemove.endsWith('/')) {
-        pathToRemove.append('/');
+    if (!pathToRemove.endsWith(QLatin1Char('/'))) {
+        pathToRemove.append(QLatin1Char('/'));
     }
     pathToRemove.append(_folderPath);
     if (!_folderPath.isEmpty())
-        pathToRemove.append('/');
+        pathToRemove.append(QLatin1Char('/'));
 
     // Check for excludes.
     QMutableListIterator<QString> it(list);
@@ -212,7 +212,7 @@ void SelectiveSyncWidget::slotUpdateDirectories(QStringList list)
 
     // Since / cannot be in the blacklist, expand it to the actual
     // list of top-level folders as soon as possible.
-    if (_oldBlackList == QStringList("/")) {
+    if (_oldBlackList == QStringList(QStringLiteral("/"))) {
         _oldBlackList.clear();
         foreach (QString path, list) {
             path.remove(pathToRemove);
@@ -248,13 +248,13 @@ void SelectiveSyncWidget::slotUpdateDirectories(QStringList list)
     foreach (QString path, list) {
         auto size = job ? job->_sizes.value(path) : 0;
         path.remove(pathToRemove);
-        QStringList paths = path.split('/');
+        QStringList paths = path.split(QLatin1Char('/'));
         if (paths.last().isEmpty())
             paths.removeLast();
         if (paths.isEmpty())
             continue;
-        if (!path.endsWith('/')) {
-            path.append('/');
+        if (!path.endsWith(QLatin1Char('/'))) {
+            path.append(QLatin1Char('/'));
         }
         recursiveInsert(root, paths, path, size);
     }

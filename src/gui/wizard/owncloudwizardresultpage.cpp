@@ -36,7 +36,7 @@ OwncloudWizardResultPage::OwncloudWizardResultPage()
 
     setTitle(WizardCommon::subTitleTemplate().arg(tr("Everything set up!")));
     // required to show header in QWizard's modern style
-    setSubTitle(QLatin1String(" "));
+    setSubTitle(QStringLiteral(" "));
 
     _ui.pbOpenLocal->setText(tr("Open Local Folder"));
     _ui.pbOpenLocal->setIcon(Utility::createColorAwareIcon(QLatin1String(":/client/resources/folder-sync.png")));
@@ -98,7 +98,7 @@ void OwncloudWizardResultPage::slotOpenLocal()
 void OwncloudWizardResultPage::slotOpenServer()
 {
     Theme *theme = Theme::instance();
-    QUrl url = QUrl(field("OCUrl").toString() + theme->wizardUrlPostfix());
+    QUrl url = QUrl(field(QStringLiteral("OCUrl")).toString() + theme->wizardUrlPostfix());
     QDesktopServices::openUrl(url);
 }
 

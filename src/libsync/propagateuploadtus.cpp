@@ -229,7 +229,7 @@ void PropagateUploadFileTUS::slotChunkFinished()
         check->setProperties({ "http://owncloud.org/ns:fileid", "getetag" });
         connect(check, &PropfindJob::result, this, [this, check](const QVariantMap &map) {
             _finished = true;
-            finalize(Utility::normalizeEtag(map.value("getetag").toByteArray()), map.value("fileid").toByteArray());
+            finalize(Utility::normalizeEtag(map.value(QStringLiteral("getetag")).toByteArray()), map.value(QStringLiteral("fileid")).toByteArray());
             slotJobDestroyed(check);
         });
         connect(check, &QObject::destroyed, this, &PropagateUploadFileCommon::slotJobDestroyed);

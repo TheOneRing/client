@@ -56,7 +56,7 @@ ShareDialog::ShareDialog(QPointer<AccountState> accountState,
 {
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setAttribute(Qt::WA_DeleteOnClose);
-    setObjectName("SharingDialog"); // required as group for saveGeometry call
+    setObjectName(QStringLiteral("SharingDialog")); // required as group for saveGeometry call
 
     _ui->setupUi(this);
 
@@ -155,13 +155,13 @@ void ShareDialog::done(int r)
 
 void ShareDialog::slotPropfindReceived(const QVariantMap &result)
 {
-    const QVariant receivedPermissions = result["share-permissions"];
+    const QVariant receivedPermissions = result[QStringLiteral("share-permissions")];
     if (!receivedPermissions.toString().isEmpty()) {
         _maxSharingPermissions = static_cast<SharePermissions>(receivedPermissions.toInt());
         qCInfo(lcSharing) << "Received sharing permissions for" << _sharePath << _maxSharingPermissions;
     }
-    auto privateLinkUrl = result["privatelink"].toString();
-    auto numericFileId = result["fileid"].toByteArray();
+    auto privateLinkUrl = result[QStringLiteral("privatelink")].toString();
+    auto numericFileId = result[QStringLiteral("fileid")].toByteArray();
     if (!privateLinkUrl.isEmpty()) {
         qCInfo(lcSharing) << "Received private link url for" << _sharePath << privateLinkUrl;
         _privateLinkUrl = privateLinkUrl;

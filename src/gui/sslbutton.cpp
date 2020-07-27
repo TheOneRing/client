@@ -79,7 +79,7 @@ QMenu *SslButton::buildCertMenu(QMenu *parent, const QSslCertificate &cert,
     QString serial = QString::fromUtf8(cert.serialNumber());
     QString effectiveDate = cert.effectiveDate().date().toString();
     QString expiryDate = cert.expiryDate().date().toString();
-    QString sna = QStringList(cert.subjectAlternativeNames().values()).join(" ");
+    QString sna = QStringList(cert.subjectAlternativeNames().values()).join(QStringLiteral(" "));
 
     QString details;
     QTextStream stream(&details);
@@ -90,7 +90,7 @@ QMenu *SslButton::buildCertMenu(QMenu *parent, const QSslCertificate &cert,
 
     stream << QLatin1String("<table>");
     stream << addCertDetailsField(tr("Common Name (CN):"), Utility::escape(cn));
-    stream << addCertDetailsField(tr("Subject Alternative Names:"), Utility::escape(sna).replace(" ", "<br/>"));
+    stream << addCertDetailsField(tr("Subject Alternative Names:"), Utility::escape(sna).replace(QLatin1String(" "), QLatin1String("<br/>")));
     stream << addCertDetailsField(tr("Organization (O):"), Utility::escape(org));
     stream << addCertDetailsField(tr("Organizational Unit (OU):"), Utility::escape(ou));
     stream << addCertDetailsField(tr("State/Province:"), Utility::escape(state));
@@ -143,7 +143,7 @@ QMenu *SslButton::buildCertMenu(QMenu *parent, const QSslCertificate &cert,
 
     // create label first
     QLabel *label = new QLabel(parent);
-    label->setStyleSheet(QLatin1String("QLabel { padding: 8px; }"));
+    label->setStyleSheet(QStringLiteral("QLabel { padding: 8px; }"));
     label->setTextFormat(Qt::RichText);
     label->setText(details);
 
@@ -192,7 +192,7 @@ void SslButton::slotUpdateMenu()
     _menu->addAction(tr("Server version: %1").arg(account->serverVersion()))->setEnabled(false);
 
     if (account->isHttp2Supported()) {
-        _menu->addAction("HTTP/2")->setEnabled(false);
+        _menu->addAction(QStringLiteral("HTTP/2"))->setEnabled(false);
     }
 
     if (account->url().scheme() == QLatin1String("https")) {

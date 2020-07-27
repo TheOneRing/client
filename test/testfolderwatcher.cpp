@@ -109,11 +109,11 @@ public:
         _rootPath = rootDir.canonicalPath();
         qDebug() << "creating test directory tree in " << _rootPath;
 
-        rootDir.mkpath("a1/b1/c1");
-        rootDir.mkpath("a1/b1/c2");
-        rootDir.mkpath("a1/b2/c1");
-        rootDir.mkpath("a1/b3/c3");
-        rootDir.mkpath("a2/b3/c3");
+        rootDir.mkpath(QStringLiteral("a1/b1/c1"));
+        rootDir.mkpath(QStringLiteral("a1/b1/c2"));
+        rootDir.mkpath(QStringLiteral("a1/b2/c1"));
+        rootDir.mkpath(QStringLiteral("a1/b3/c3"));
+        rootDir.mkpath(QStringLiteral("a2/b3/c3"));
         Utility::writeRandomFile( _rootPath+"/a1/random.bin");
         Utility::writeRandomFile( _rootPath+"/a1/b2/todelete.bin");
         Utility::writeRandomFile( _rootPath+"/a2/renamefile");
@@ -147,7 +147,7 @@ private slots:
     void testACreate() { // create a new file
         QString file(_rootPath + "/foo.txt");
         QString cmd;
-        cmd = QString("echo \"xyz\" > %1").arg(file);
+        cmd = QStringLiteral("echo \"xyz\" > %1").arg(file);
         qDebug() << "Command: " << cmd;
         system(cmd.toLocal8Bit());
 

@@ -132,8 +132,8 @@ void OwncloudSetupWizard::slotCheckServer(const QString &urlString)
     QString fixedUrl = urlString;
     QUrl url = QUrl::fromUserInput(fixedUrl);
     // fromUserInput defaults to http, not http if no scheme is specified
-    if (!fixedUrl.startsWith("http://") && !fixedUrl.startsWith("https://")) {
-        url.setScheme("https");
+    if (!fixedUrl.startsWith(QLatin1String("http://")) && !fixedUrl.startsWith(QLatin1String("https://"))) {
+        url.setScheme(QStringLiteral("https"));
     }
     AccountPtr account = _ocWizard->account();
     account->setUrl(url);
@@ -201,7 +201,7 @@ void OwncloudSetupWizard::slotFindServer()
     connect(job, &CheckServerJob::instanceFound, this, &OwncloudSetupWizard::slotFoundServer);
     connect(job, &CheckServerJob::instanceNotFound, this, &OwncloudSetupWizard::slotFindServerBehindRedirect);
     connect(job, &CheckServerJob::timeout, this, &OwncloudSetupWizard::slotNoServerFoundTimeout);
-    job->setTimeout((account->url().scheme() == "https") ? 30 * 1000 : 10 * 1000);
+    job->setTimeout((account->url().scheme() == QLatin1String("https")) ? 30 * 1000 : 10 * 1000);
     job->start();
 
     // Step 2 and 3 are in slotFindServerBehindRedirect()
@@ -239,7 +239,7 @@ void OwncloudSetupWizard::slotFindServerBehindRedirect()
             connect(job, &CheckServerJob::instanceFound, this, &OwncloudSetupWizard::slotFoundServer);
             connect(job, &CheckServerJob::instanceNotFound, this, &OwncloudSetupWizard::slotNoServerFound);
             connect(job, &CheckServerJob::timeout, this, &OwncloudSetupWizard::slotNoServerFoundTimeout);
-            job->setTimeout((account->url().scheme() == "https") ? 30 * 1000 : 10 * 1000);
+            job->setTimeout((account->url().scheme() == QLatin1String("https")) ? 30 * 1000 : 10 * 1000);
             job->start();
     });
 }
@@ -312,7 +312,7 @@ void OwncloudSetupWizard::slotConnectToOCUrl(const QString &url)
     qCInfo(lcWizard) << "Connect to url: " << url;
     AbstractCredentials *creds = _ocWizard->getCredentials();
     _ocWizard->account()->setCredentials(creds);
-    _ocWizard->setField(QLatin1String("OCUrl"), url);
+    _ocWizard->setField(QStringLiteral("OCUrl"), url);
     _ocWizard->appendToConfigurationLog(tr("Trying to connect to %1 at %2...")
                                             .arg(Theme::instance()->appNameGUI())
                                             .arg(url));
@@ -324,7 +324,7 @@ void OwncloudSetupWizard::testOwnCloudConnect()
 {
     AccountPtr account = _ocWizard->account();
 
-    auto *job = new PropfindJob(account, "/", this);
+    auto *job = new PropfindJob(account, QStringLiteral("/"), this);
     job->setIgnoreCredentialFailure(true);
     // There is custom redirect handling in the error handler,
     // so don't automatically follow redirects.
@@ -541,7 +541,7 @@ void OwncloudSetupWizard::finalizeSetup(bool success)
                 tr("A sync connection from %1 to remote directory %2 was set up.")
                     .arg(localFolder, _remoteFolder));
         }
-        _ocWizard->appendToConfigurationLog(QLatin1String(" "));
+        _ocWizard->appendToConfigurationLog(QStringLiteral(" "));
         _ocWizard->appendToConfigurationLog(QLatin1String("<p><font color=\"green\"><b>")
             + tr("Successfully connected to %1!")
                   .arg(Theme::instance()->appNameGUI())
@@ -589,7 +589,7 @@ void OwncloudSetupWizard::slotAssistantFinished(int result)
 
         QString localFolder = FolderDefinition::prepareLocalPath(_ocWizard->localFolder());
 
-        bool startFromScratch = _ocWizard->field("OCSyncFromScratch").toBool();
+        bool startFromScratch = _ocWizard->field(QStringLiteral("OCSyncFromScratch")).toBool();
         if (!startFromScratch || ensureStartFromScratch(localFolder)) {
             qCInfo(lcWizard) << "Adding folder definition for" << localFolder << _remoteFolder;
             FolderDefinition folderDefinition;
@@ -614,7 +614,7 @@ void OwncloudSetupWizard::slotAssistantFinished(int result)
                 if (!_ocWizard->isConfirmBigFolderChecked()) {
                     // The user already accepted the selective sync dialog. everything is in the white list
                     f->journalDb()->setSelectiveSyncList(SyncJournalDb::SelectiveSyncWhiteList,
-                        QStringList() << QLatin1String("/"));
+                        QStringList() << QStringLiteral("/"));
                 }
             }
             _ocWizard->appendToConfigurationLog(tr("<font color=\"green\"><b>Local sync folder %1 successfully created!</b></font>").arg(localFolder));

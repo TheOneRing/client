@@ -63,8 +63,8 @@ private slots:
         QString dirPath = dir2.canonicalPath();
 
         AccountPtr account = Account::create();
-        QUrl url("http://example.de");
-        HttpCredentialsTest *cred = new HttpCredentialsTest("testuser", "secret");
+        QUrl url(QStringLiteral("http://example.de"));
+        HttpCredentialsTest *cred = new HttpCredentialsTest(QStringLiteral("testuser"), QStringLiteral("secret"));
         account->setCredentials(cred);
         account->setUrl( url );
 
@@ -98,8 +98,8 @@ private slots:
         QVERIFY(!folderman->checkPathValidityForNewFolder(dirPath + "/ownCloud2/", url2).isNull());
 
         // Now it will work because the account is different
-        QUrl url3("http://anotherexample.org");
-        url3.setUserName("dummy");
+        QUrl url3(QStringLiteral("http://anotherexample.org"));
+        url3.setUserName(QStringLiteral("dummy"));
         QCOMPARE(folderman->checkPathValidityForNewFolder(dirPath + "/sub/ownCloud1", url3), QString());
         QCOMPARE(folderman->checkPathValidityForNewFolder(dirPath + "/ownCloud2/", url3), QString());
 
@@ -145,12 +145,12 @@ private slots:
 #endif
 
 #ifdef Q_OS_WIN // drive-letter tests
-        if (!QFileInfo("v:/").exists()) {
+        if (!QFileInfo(QStringLiteral("v:/")).exists()) {
             QVERIFY(!folderman->checkPathValidityForNewFolder("v:").isNull());
             QVERIFY(!folderman->checkPathValidityForNewFolder("v:/").isNull());
             QVERIFY(!folderman->checkPathValidityForNewFolder("v:/foo").isNull());
         }
-        if (QFileInfo("c:/").isWritable()) {
+        if (QFileInfo(QStringLiteral("c:/")).isWritable()) {
             QVERIFY(folderman->checkPathValidityForNewFolder("c:").isNull());
             QVERIFY(folderman->checkPathValidityForNewFolder("c:/").isNull());
             QVERIFY(folderman->checkPathValidityForNewFolder("c:/foo").isNull());
@@ -184,8 +184,8 @@ private slots:
         QString dirPath = dir2.canonicalPath();
 
         AccountPtr account = Account::create();
-        QUrl url("http://example.de");
-        HttpCredentialsTest *cred = new HttpCredentialsTest("testuser", "secret");
+        QUrl url(QStringLiteral("http://example.de"));
+        HttpCredentialsTest *cred = new HttpCredentialsTest(QStringLiteral("testuser"), QStringLiteral("secret"));
         account->setCredentials(cred);
         account->setUrl( url );
         url.setUserName(cred->user());

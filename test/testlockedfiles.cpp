@@ -114,8 +114,8 @@ private slots:
         //
         // Local change, attempted upload, but file is locked!
         //
-        fakeFolder.localModifier().appendByte("A/a1");
-        tracker.addTouchedPath("A/a1");
+        fakeFolder.localModifier().appendByte(QStringLiteral("A/a1"));
+        tracker.addTouchedPath(QStringLiteral("A/a1"));
         auto h1 = makeHandle(fakeFolder.localPath() + "A/a1", 0);
 
         fakeFolder.syncEngine().setLocalDiscoveryOptions(LocalDiscoveryStyle::DatabaseAndFilesystem, tracker.localDiscoveryPaths());
@@ -139,7 +139,7 @@ private slots:
         //
         // Remote change, attempted download, but file is locked!
         //
-        fakeFolder.remoteModifier().appendByte("A/a1");
+        fakeFolder.remoteModifier().appendByte(QStringLiteral("A/a1"));
         auto h2 = makeHandle(fakeFolder.localPath() + "A/a1", 0);
 
         fakeFolder.syncEngine().setLocalDiscoveryOptions(LocalDiscoveryStyle::DatabaseAndFilesystem, tracker.localDiscoveryPaths());

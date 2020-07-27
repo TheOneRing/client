@@ -99,7 +99,7 @@ GeneralSettings::GeneralSettings(QWidget *parent)
 #endif
     }
 
-    _ui->versionLabel->setText(QStringLiteral("<a href='%1'>%1</a>").arg(MIRALL_VERSION_STRING));
+    _ui->versionLabel->setText(QStringLiteral("<a href='" MIRALL_VERSION_STRING "'>" MIRALL_VERSION_STRING "</a>"));
     QObject::connect(_ui->versionLabel, &QLabel::linkActivated, this, &GeneralSettings::showAbout);
 
     if (!theme->aboutShowCopyright()) {
@@ -160,7 +160,7 @@ void GeneralSettings::slotUpdateInfo()
 #endif
 
     // Channel selection
-    _ui->updateChannel->setCurrentIndex(ConfigFile().updateChannel() == "beta" ? 1 : 0);
+    _ui->updateChannel->setCurrentIndex(ConfigFile().updateChannel() == QLatin1String("beta") ? 1 : 0);
     connect(_ui->updateChannel, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
         this, &GeneralSettings::slotUpdateChannelChanged, Qt::UniqueConnection);
 }

@@ -51,7 +51,7 @@ OwncloudWizard::OwncloudWizard(QWidget *parent)
     , _credentialsPage(nullptr)
     , _setupLog()
 {
-    setObjectName("owncloudWizard");
+    setObjectName(QStringLiteral("owncloudWizard"));
 
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
     setPage(WizardCommon::Page_ServerSetup, _setupPage);
@@ -124,7 +124,7 @@ bool OwncloudWizard::isConfirmBigFolderChecked() const
 
 QString OwncloudWizard::ocUrl() const
 {
-    QString url = field("OCUrl").toString().simplified();
+    QString url = field(QStringLiteral("OCUrl")).toString().simplified();
     return url;
 }
 

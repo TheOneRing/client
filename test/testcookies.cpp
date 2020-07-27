@@ -18,7 +18,7 @@ private slots:
     void testCookies()
     {
         QTemporaryDir tmp;
-        const QString nonexistingPath = tmp.filePath("someNonexistingDir/test.db");
+        const QString nonexistingPath = tmp.filePath(QStringLiteral("someNonexistingDir/test.db"));
         QNetworkCookie cookieA = QNetworkCookie("foo", "bar");
         // tomorrow rounded
         cookieA.setExpirationDate(QDateTime(QDateTime::currentDateTimeUtc().addDays(1).date()));

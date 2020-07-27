@@ -48,7 +48,7 @@ void NotificationWidget::setActivity(const Activity &activity)
     if (activity._link.isEmpty()) {
         _ui._subjectLabel->setText(activity._subject);
     } else {
-        _ui._subjectLabel->setText( QString("<a href=\"%1\">%2</a>")
+        _ui._subjectLabel->setText( QStringLiteral("<a href=\"%1\">%2</a>")
                     .arg(activity._link.toString(QUrl::FullyEncoded),
                          activity._subject.toHtmlEscaped() ));
         _ui._subjectLabel->setTextFormat(Qt::RichText);
@@ -57,7 +57,7 @@ void NotificationWidget::setActivity(const Activity &activity)
 
     _ui._messageLabel->setText(activity._message);
 
-    const auto icon = Utility::createColorAwareIcon(":/client/resources/bell.png").scaled(64, 64, Qt::KeepAspectRatio);
+    const auto icon = Utility::createColorAwareIcon(QStringLiteral(":/client/resources/bell.png")).scaled(64, 64, Qt::KeepAspectRatio);
     _ui._notifIcon->setPixmap(icon);
     _ui._notifIcon->setFixedSize(icon.size());
     _ui._notifIcon->show();

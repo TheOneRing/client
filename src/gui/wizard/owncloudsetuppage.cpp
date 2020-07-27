@@ -60,7 +60,7 @@ OwncloudSetupPage::OwncloudSetupPage(QWidget *parent)
     }
 
 
-    registerField(QLatin1String("OCUrl*"), _ui.leUrl);
+    registerField(QStringLiteral("OCUrl*"), _ui.leUrl);
 
     _ui.resultLayout->addWidget(_progressIndi);
     stopSpinner();
@@ -108,7 +108,7 @@ void OwncloudSetupPage::slotUrlChanged(const QString &url)
     _authTypeKnown = false;
 
     QString newUrl = url;
-    if (url.endsWith("index.php")) {
+    if (url.endsWith(QLatin1String("index.php"))) {
         newUrl.chop(9);
     }
     if (_ocWizard && _ocWizard->account()) {
@@ -128,11 +128,11 @@ void OwncloudSetupPage::slotUrlChanged(const QString &url)
     }
 
     if (!url.startsWith(QLatin1String("https://"))) {
-        _ui.urlLabel->setPixmap(Utility::createColorAwareIcon(":/client/resources/lock-http.png"));
+        _ui.urlLabel->setPixmap(Utility::createColorAwareIcon(QStringLiteral(":/client/resources/lock-http.png")));
         _ui.urlLabel->setToolTip(tr("This url is NOT secure as it is not encrypted.\n"
                                     "It is not advisable to use it."));
     } else {
-        _ui.urlLabel->setPixmap(Utility::createColorAwareIcon(":/client/resources/lock-https.png"));
+        _ui.urlLabel->setPixmap(Utility::createColorAwareIcon(QStringLiteral(":/client/resources/lock-https.png")));
         _ui.urlLabel->setToolTip(tr("This url is secure. You can use it."));
     }
 }
@@ -142,7 +142,7 @@ void OwncloudSetupPage::slotUrlEditFinished()
     QString url = _ui.leUrl->fullText();
     if (QUrl(url).isRelative() && !url.isEmpty()) {
         // no scheme defined, set one
-        url.prepend("https://");
+        url.prepend(QStringLiteral("https://"));
         _ui.leUrl->setFullText(url);
     }
 }
@@ -237,7 +237,7 @@ void OwncloudSetupPage::setErrorString(const QString &err, bool retryHTTPonly)
     } else {
         if (retryHTTPonly) {
             QUrl url(_ui.leUrl->fullText());
-            if (url.scheme() == "https") {
+            if (url.scheme() == QLatin1String("https")) {
                 // Ask the user how to proceed when connecting to a https:// URL fails.
                 // It is possible that the server is secured with client-side TLS certificates,
                 // but that it has no way of informing the owncloud client that this is the case.
@@ -249,7 +249,7 @@ void OwncloudSetupPage::setErrorString(const QString &err, bool retryHTTPonly)
 
                 switch (retVal) {
                 case OwncloudConnectionMethodDialog::No_TLS: {
-                    url.setScheme("http");
+                    url.setScheme(QStringLiteral("http"));
                     _ui.leUrl->setFullText(url.toString());
                     // skip ahead to next page, since the user would expect us to retry automatically
                     wizard()->next();

@@ -217,7 +217,7 @@ void parseOptions(const QStringList &app_args, CmdOptions *options)
     if (argCount < 3) {
         if (argCount >= 2) {
             const QString option = args.at(1);
-            if (option == "-v" || option == "--version") {
+            if (option == QLatin1String("-v") || option == QLatin1String("--version")) {
                 showVersion();
             }
         }
@@ -227,8 +227,8 @@ void parseOptions(const QStringList &app_args, CmdOptions *options)
     options->target_url = args.takeLast();
 
     options->source_dir = args.takeLast();
-    if (!options->source_dir.endsWith('/')) {
-        options->source_dir.append('/');
+    if (!options->source_dir.endsWith(QLatin1Char('/'))) {
+        options->source_dir.append(QLatin1Char('/'));
     }
     QFileInfo fi(options->source_dir);
     if (!fi.exists()) {
@@ -245,38 +245,38 @@ void parseOptions(const QStringList &app_args, CmdOptions *options)
     while (it.hasNext()) {
         const QString option = it.next();
 
-        if (option == "--httpproxy" && !it.peekNext().startsWith("-")) {
+        if (option == QLatin1String("--httpproxy") && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->proxy = it.next();
-        } else if (option == "-s" || option == "--silent") {
+        } else if (option == QLatin1String("-s") || option == QLatin1String("--silent")) {
             options->silent = true;
-        } else if (option == "--trust") {
+        } else if (option == QLatin1String("--trust")) {
             options->trustSSL = true;
-        } else if (option == "-n") {
+        } else if (option == QLatin1String("-n")) {
             options->useNetrc = true;
-        } else if (option == "-h") {
+        } else if (option == QLatin1String("-h")) {
             options->ignoreHiddenFiles = false;
-        } else if (option == "--non-interactive") {
+        } else if (option == QLatin1String("--non-interactive")) {
             options->interactive = false;
-        } else if ((option == "-u" || option == "--user") && !it.peekNext().startsWith("-")) {
+        } else if ((option == QLatin1String("-u") || option == QLatin1String("--user")) && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->user = it.next();
-        } else if ((option == "-p" || option == "--password") && !it.peekNext().startsWith("-")) {
+        } else if ((option == QLatin1String("-p") || option == QLatin1String("--password")) && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->password = it.next();
-        } else if (option == "--exclude" && !it.peekNext().startsWith("-")) {
+        } else if (option == QLatin1String("--exclude") && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->exclude = it.next();
-        } else if (option == "--unsyncedfolders" && !it.peekNext().startsWith("-")) {
+        } else if (option == QLatin1String("--unsyncedfolders") && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->unsyncedfolders = it.next();
-        } else if (option == "--nonshib") {
+        } else if (option == QLatin1String("--nonshib")) {
             options->nonShib = true;
-        } else if (option == "--davpath" && !it.peekNext().startsWith("-")) {
+        } else if (option == QLatin1String("--davpath") && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->davPath = it.next();
-        } else if (option == "--max-sync-retries" && !it.peekNext().startsWith("-")) {
+        } else if (option == QLatin1String("--max-sync-retries") && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->restartTimes = it.next().toInt();
-        } else if (option == "--uplimit" && !it.peekNext().startsWith("-")) {
+        } else if (option == QLatin1String("--uplimit") && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->uplimit = it.next().toInt() * 1000;
-        } else if (option == "--downlimit" && !it.peekNext().startsWith("-")) {
+        } else if (option == QLatin1String("--downlimit") && !it.peekNext().startsWith(QLatin1String("-"))) {
             options->downlimit = it.next().toInt() * 1000;
-        } else if (option == "--logdebug") {
-            Logger::instance()->setLogFile("-");
+        } else if (option == QLatin1String("--logdebug")) {
+            Logger::instance()->setLogFile(QStringLiteral("-"));
             Logger::instance()->setLogDebug(true);
         } else {
             help();
@@ -318,7 +318,7 @@ int main(int argc, char **argv)
 
 #ifdef Q_OS_WIN
     // Ensure OpenSSL config file is only loaded from app directory
-    QString opensslConf = QCoreApplication::applicationDirPath() + QString("/openssl.cnf");
+    QString opensslConf = QCoreApplication::applicationDirPath() + QStringLiteral("/openssl.cnf");
     qputenv("OPENSSL_CONF", opensslConf.toLocal8Bit());
 #endif
 
@@ -340,7 +340,7 @@ int main(int argc, char **argv)
     if (options.silent) {
         qInstallMessageHandler(nullMessageHandler);
     } else {
-        qSetMessagePattern("%{time MM-dd hh:mm:ss:zzz} [ %{type} %{category} ]%{if-debug}\t[ %{function} ]%{endif}:\t%{message}");
+        qSetMessagePattern(QStringLiteral("%{time MM-dd hh:mm:ss:zzz} [ %{type} %{category} ]%{if-debug}\t[ %{function} ]%{endif}:\t%{message}"));
     }
 
     AccountPtr account = Account::create();
@@ -350,8 +350,8 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     // check if the webDAV path was added to the url and append if not.
-    if (!options.target_url.endsWith("/")) {
-        options.target_url.append("/");
+    if (!options.target_url.endsWith(QLatin1Char('/'))) {
+        options.target_url.append(QLatin1Char('/'));
     }
 
     if (options.nonShib) {
@@ -410,18 +410,18 @@ int main(int argc, char **argv)
     QByteArray remUrl = options.target_url.toUtf8();
 
     // Find the folder and the original owncloud url
-    QStringList splitted = url.path().split("/" + account->davPath());
+    QStringList splitted = url.path().split(QLatin1String("/") + account->davPath());
     url.setPath(splitted.value(0));
 
-    url.setScheme(url.scheme().replace("owncloud", "http"));
+    url.setScheme(url.scheme().replace(QLatin1String("owncloud"), QLatin1String("http")));
 
     QUrl credentialFreeUrl = url;
     credentialFreeUrl.setUserName(QString());
     credentialFreeUrl.setPassword(QString());
 
     // Remote folders typically start with a / and don't end with one
-    QString folder = "/" + splitted.value(1);
-    if (folder.endsWith("/") && folder != "/") {
+    QString folder = QLatin1Char('/') + splitted.value(1);
+    if (folder.endsWith(QLatin1String("/")) && folder != QLatin1String("/")) {
         folder.chop(1);
     }
 
@@ -430,12 +430,12 @@ int main(int argc, char **argv)
         int port = 0;
         bool ok;
 
-        QStringList pList = options.proxy.split(':');
+        QStringList pList = options.proxy.split(QLatin1Char(':'));
         if (pList.count() == 3) {
             // http: //192.168.178.23 : 8080
             //  0            1            2
             host = pList.at(1);
-            if (host.startsWith("//"))
+            if (host.startsWith(QLatin1String("//")))
                 host.remove(0, 2);
 
             port = pList.at(2).toInt(&ok);
@@ -471,12 +471,12 @@ int main(int argc, char **argv)
         // 'dav' endpoint instead of the nonshib one (which still use the old chunking)
 
         QEventLoop loop;
-        JsonApiJob *job = new JsonApiJob(account, QLatin1String("ocs/v1.php/cloud/capabilities"));
+        JsonApiJob *job = new JsonApiJob(account, QStringLiteral("ocs/v1.php/cloud/capabilities"));
         QObject::connect(job, &JsonApiJob::jsonReceived, [&](const QJsonDocument &json) {
-            auto caps = json.object().value("ocs").toObject().value("data").toObject().value("capabilities").toObject();
+            auto caps = json.object().value(QStringLiteral("ocs")).toObject().value(QStringLiteral("data")).toObject().value(QStringLiteral("capabilities")).toObject();
             qDebug() << "Server capabilities" << caps;
             account->setCapabilities(caps.toVariantMap());
-            account->setServerVersion(caps["core"].toObject()["status"].toObject()["version"].toString());
+            account->setServerVersion(caps[QStringLiteral("core")].toObject()[QStringLiteral("status")].toObject()[QStringLiteral("version")].toString());
             loop.quit();
         });
         job->start();
@@ -487,11 +487,11 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 
-        job = new JsonApiJob(account, QLatin1String("ocs/v1.php/cloud/user"));
+        job = new JsonApiJob(account, QStringLiteral("ocs/v1.php/cloud/user"));
         QObject::connect(job, &JsonApiJob::jsonReceived, [&](const QJsonDocument &json) {
-            const QJsonObject data = json.object().value("ocs").toObject().value("data").toObject();
-            account->setDavUser(data.value("id").toString());
-            account->setDavDisplayName(data.value("display-name").toString());
+            const QJsonObject data = json.object().value(QStringLiteral("ocs")).toObject().value(QStringLiteral("data")).toObject();
+            account->setDavUser(data.value(QStringLiteral("id")).toString());
+            account->setDavDisplayName(data.value(QStringLiteral("display-name")).toString());
             loop.quit();
         });
         job->start();
@@ -513,7 +513,7 @@ restart_sync:
             qCritical() << "Could not open file containing the list of unsynced folders: " << options.unsyncedfolders;
         } else {
             // filter out empty lines and comments
-            selectiveSyncList = QString::fromUtf8(f.readAll()).split('\n').filter(QRegExp("\\S+")).filter(QRegExp("^[^#]"));
+            selectiveSyncList = QString::fromUtf8(f.readAll()).split(QLatin1Char('\n')).filter(QRegExp(QStringLiteral("\\S+"))).filter(QRegExp(QStringLiteral("^[^#]")));
 
             for (int i = 0; i < selectiveSyncList.count(); ++i) {
                 if (!selectiveSyncList.at(i).endsWith(QLatin1Char('/'))) {

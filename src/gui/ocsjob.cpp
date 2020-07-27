@@ -25,7 +25,7 @@ namespace OCC {
 Q_LOGGING_CATEGORY(lcOcs, "gui.sharing.ocs", QtInfoMsg)
 
 OcsJob::OcsJob(AccountPtr account)
-    : AbstractNetworkJob(account, "")
+    : AbstractNetworkJob(account, QLatin1String(""))
 {
     _passStatusCodes.append(OCS_SUCCESS_STATUS_CODE);
     _passStatusCodes.append(OCS_SUCCESS_STATUS_CODE_V2);
@@ -60,8 +60,8 @@ static QUrlQuery percentEncodeQueryItems(
     // the query items, see #5042
     foreach (const auto &item, items) {
         result.addQueryItem(
-            QUrl::toPercentEncoding(item.first),
-            QUrl::toPercentEncoding(item.second));
+            QString::fromUtf8(QUrl::toPercentEncoding(item.first)),
+            QString::fromUtf8(QUrl::toPercentEncoding(item.second)));
     }
     return result;
 }
@@ -90,7 +90,7 @@ void OcsJob::start()
         }
         buffer->setData(postData);
     }
-    queryItems.addQueryItem(QLatin1String("format"), QLatin1String("json"));
+    queryItems.addQueryItem(QStringLiteral("format"), QStringLiteral("json"));
     QUrl url = Utility::concatUrlPath(account()->url(), path(), queryItems);
     sendRequest(_verb, url, req, buffer);
     AbstractNetworkJob::start();
@@ -129,9 +129,9 @@ bool OcsJob::finished()
 int OcsJob::getJsonReturnCode(const QJsonDocument &json, QString &message)
 {
     //TODO proper checking
-    auto meta = json.object().value("ocs").toObject().value("meta").toObject();
-    int code = meta.value("statuscode").toInt();
-    message = meta.value("message").toString();
+    auto meta = json.object().value(QStringLiteral("ocs")).toObject().value(QStringLiteral("meta")).toObject();
+    int code = meta.value(QStringLiteral("statuscode")).toInt();
+    message = meta.value(QStringLiteral("message")).toString();
 
     return code;
 }

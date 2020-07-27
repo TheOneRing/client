@@ -121,7 +121,7 @@ public:
         _socketListener->sendMessage(QLatin1String("RESOLVE|") + _jobId + '|' + response);
     }
 
-    void resolve(const QJsonObject &response) { resolve(QJsonDocument{ response }.toJson()); }
+    void resolve(const QJsonObject &response) { resolve(QString::fromUtf8(QJsonDocument{ response }.toJson())); }
 
     const QJsonObject &arguments() { return _arguments; }
 
