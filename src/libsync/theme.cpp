@@ -430,9 +430,9 @@ QColor Theme::wizardHeaderBackgroundColor() const
     return QColor();
 }
 
-QPixmap Theme::wizardHeaderLogo() const
+QIcon Theme::wizardHeaderLogo() const
 {
-    return applicationIcon().pixmap(64);
+    return applicationIcon();
 }
 
 QPixmap Theme::wizardHeaderBanner() const

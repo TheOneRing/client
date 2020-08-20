@@ -180,7 +180,7 @@ public:
     virtual QColor wizardHeaderBackgroundColor() const;
 
     /** @return logo for the setup wizard. */
-    virtual QPixmap wizardHeaderLogo() const;
+    virtual QIcon wizardHeaderLogo() const;
 
     /**
      * The default implementation creates a
