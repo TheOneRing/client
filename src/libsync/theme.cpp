@@ -435,14 +435,14 @@ QIcon Theme::wizardHeaderLogo() const
     return applicationIcon();
 }
 
-QIcon Theme::wizardHeaderBanner() const
+QPixmap Theme::wizardHeaderBanner(const QSize &size) const
 {
-    QColor c = wizardHeaderBackgroundColor();
+    const QColor c = wizardHeaderBackgroundColor();
     if (!c.isValid())
-        return QIcon();
-    QPixmap pix(QSize{750, 78});
+        return QPixmap();
+    QPixmap pix(size);
     pix.fill(c);
-    return QIcon(pix);
+    return pix;
 }
 #endif
 
